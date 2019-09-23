@@ -2,7 +2,7 @@ let express = require('express');
 let http = require('http');
 let bodyparser = require('body-parser');
 let morgan = require('morgan');
-let routes = require('./api/routes');
+const routes = require('./api/routes.js');
 
 const app = express();
 
@@ -15,5 +15,7 @@ app.use('/',routes);
 const port = 4250;
 
 const server = http.createServer(app);
-server.listen(port);
+server.listen(port, 'localhost', () => {
+  console.log("Server is up and running");
+});
 
