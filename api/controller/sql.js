@@ -22,19 +22,27 @@ con.connect((err) => {
   console.log("Connected to database");
 });
 
+function getAll(){
+
+}
 
 function getName(){
-  let sql = "SELECT * FROM User";
-  con.query(sql, (err,result) => {
+  let sql = "SELECT FirstName,LastName FROM Users";
+  con.query(sql, (err,result,fields) => {
     if(err) throw err;
 
     console.log("Selected all users");
+    console.log(result);
   });
-  return Promise.resolve("Successfully returned users");
+  return Promise.resolve('Returning all users');
+}
+
+function getHobbies(){
+
 }
 
 function postData(){
-  let user = "INSERT INTO User (FirstName, LastName, MOB, DOB, YOB, Email) VALUES ('Adrian', 'Lee', '03', '15', '1998', 'mynameisadrianlee@gmail.com')";
+  let user = "INSERT INTO Users (FirstName, LastName, MOB, DOB, YOB, Email) VALUES ('Adrian', 'Lee', '03', '15', '1998', 'mynameisadrianlee@gmail.com')";
   con.query(user, (err,result) => {
     if(err)
       throw err;
@@ -46,11 +54,13 @@ function postData(){
     if(err) throw err;
     console.log("Hobby has been populated");
   });
+
+  let utoh = "";
   return Promise.resolve("Successfully Updated a Record");
 }
 
-function deleteUser(){
-  let sql = "DELETE";
+function deleteUser(user){
+  let sql = "DELETE FROM Users WHERE Email="+"'"+user+"'";
   con.query(sql, (err,result) => {
     if(err) throw err;
 
@@ -59,13 +69,43 @@ function deleteUser(){
   return Promise.resolve("Successfully Deleted User");
 }
 
-function deleteAll(){
+function deleteHobby(hobby){
+  let sql = "DELETE FROM Hobbies WHERE Activity="+"'"+hobby+"'";
+  con.query(sql, (err,result) => {
+    if(err) throw err;
 
+    console.log("Deleted Activity");
+  });
+  return Promise.resolve("Successfully Deleted Hobby");
+}
+
+function deleteAll(){
+  let hobbies = "DELETE FROM Hobbies";
+  let users = "DELETE FROM Users";
+  //let u_to_h = "DELETE FROM User_to_Hobby";
+
+  con.query(hobbies, (err,result) => {
+    if(err) throw err;
+    console.log("Deleted the table Hobbies");
+  });
+  con.query(users, (err,result) => {
+    if(err) throw err;
+    console.log("Deleted the table Users");
+  });
+  //con.query(u_to_h, (err,result) => {
+  //  if(err) throw err;
+  //  console.log("Deleted the table Users_to_Hobby");
+  //});
+
+  return Promise.resolve("Deleted all tables");
 } 
 
 
 module.exports = {
   postData,
-  getName 
+  getName,
+  deleteUser,
+  deleteHobby,
+  deleteAll
 };
 
