@@ -13,7 +13,8 @@ const con = mysql.createConnection({
   host: "10.0.2.2",
   user: "root",
   password: "Mynameisjimmy1",
-  database: "mydb"
+  database: "mydb",
+  multipleStatements: "true"
 });
 
 con.connect((err) => {
@@ -41,26 +42,39 @@ function getHobbies(){
 
 }
 
-function postData(){
-  let user = "INSERT INTO Users (FirstName, LastName, MOB, DOB, YOB, Email) VALUES ('Adrian', 'Lee', '03', '15', '1998', 'mynameisadrianlee@gmail.com')";
-  con.query(user, (err,result) => {
-    if(err)
-      throw err;
-    console.log("User has been populated");
+function postData(body){
+  const fname = body.users.fname, lname = body.users.lname, mob = body.users.mob, dob = body.users.dob, yob = body.users.yob, email = body.users.email
+  console.log(fname + lname + mob + dob + yob + email)
+  let user = "INSERT INTO Users (FirstName, LastName, MOB, DOB, YOB, Email) VALUES (?,?,?,?,?,?)";
+  con.query(user, [fname,lname,mob,dob,yob,email], (err,results) => {
+    if(err){
+      console.log("Error posting to the User table")
+      return Promise.reject(err);
+    }
   });
 
-  let hobby = "INSERT INTO Hobbies (Activity, Category) VALUES ('Tennis', 'Sports')";
-  con.query(hobby, (err,result) => {
-    if(err) throw err;
-    console.log("Hobby has been populated");
+  const act = body.hobbies.act, cat = body.hobbies.cat;
+  let hobby = "INSERT INTO Hobbies (Activity, Category) VALUES (?,?)";
+  con.query(hobby, [act,cat], (err,result) => {
+    if(err){
+      console.log("Error posting to the Hobbies table")
+      return Promise.reject(err); 
+    }
   });
 
-  let utoh = "";
+  let uh = "INSERT INTO User_To_Hobby (idUsers) VALUES ((SELECT idHobbies FROM Hobbies WHERE Activity=?),(SELECT idUsers FROM Users WHERE Email=?))"; 
+  con.query(uh, [email,act], (err,result) => {
+    if(err){
+      console.log("Error posting to the User to Hobby table")
+      return Promise.reject(err);
+    }
+  })
+
   return Promise.resolve("Successfully Updated a Record");
 }
 
 function deleteUser(user){
-  let sql = "DELETE FROM Users WHERE Email="+"'"+user+"'";
+  let sql = "DELETE FROM Users WHERE Email=" +"'"+user+"'";
   con.query(sql, (err,result) => {
     if(err) throw err;
 
@@ -70,7 +84,7 @@ function deleteUser(user){
 }
 
 function deleteHobby(hobby){
-  let sql = "DELETE FROM Hobbies WHERE Activity="+"'"+hobby+"'";
+  let sql = "DELETE FROM Hobbies WHERE Activity=" +"'"+hobby+"'";
   con.query(sql, (err,result) => {
     if(err) throw err;
 

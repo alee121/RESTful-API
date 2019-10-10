@@ -7,7 +7,7 @@ const routes = require('./api/routes.js');
 const app = express();
 
 app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({extended:false}));
+app.use(bodyparser.urlencoded({extended:true}));
 app.use(morgan('combined'));
 
 app.use('/',routes);

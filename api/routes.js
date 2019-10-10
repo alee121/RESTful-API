@@ -30,7 +30,8 @@ router.get('/hobbies', (req,res) => {
 
 //Update all using the body of the packet sent
 router.post('/populate', async (req,res) => {
-  var response = await sql.postData()
+  let body = req.body
+  var response = await sql.postData(body)
   .then((response) => {
     res.status(200).json({
       message: response
@@ -89,9 +90,9 @@ router.delete('/deleteAll', async (req,res) => {
   })
 });
 
-router.all('/', (req,res) => {
-  res.status(404).send({
-    message: 'ERROR, PATH NOT FOUND'
+router.use((req,res) => {
+  res.status(404).json({
+    error: 'PATH NOT FOUND'
   });
 });
 
