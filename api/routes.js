@@ -3,7 +3,22 @@ let sql     = require('./controller/sql.js');
 
 const router = express.Router();
 
-//Get the users' names and the hobbies they enjoy but no other sensitive personal information
+//Get all users and the hobbies they are interested in
+router.get('/info', (req,res) => {
+   var response = await sql.getAll()
+  .then((response) => {
+    res.status(200).json({
+      message: response
+    });
+  })
+  .catch(err => {
+    res.status(401).json({
+      error: err
+    })
+  })
+});
+
+//Get all the users names from the database
 router.get('/users', async (req,res) => {
   var response = await sql.getName()
   .then((response) => {
@@ -18,14 +33,19 @@ router.get('/users', async (req,res) => {
   })
 });
 
-//Get the all users' name from database
-router.get('/info', (req,res) => {
-  res.send("Getting users' names");
-});
-
 //Get the hobbies of user
 router.get('/hobbies', (req,res) => {
-  res.send('Getting hobbies of users');
+  var response = await sql.getHobbies
+  .then((response) => {
+    res.status(200).json({
+      message: response
+    });
+  })
+  .catch(err => {
+    res.status(401).json({
+      error: err
+    })
+  })
 });
 
 //Update all using the body of the packet sent
@@ -44,8 +64,8 @@ router.post('/populate', async (req,res) => {
   })
 });
 
-//delete name or hobby
-router.delete('/email/:name', async (req,res) => {
+//delete user from the Users table
+router.delete('/user/:name', async (req,res) => {
   var name = req.params.name;
   var response = await sql.deleteUser(name)
   .then((response) => {
@@ -60,6 +80,7 @@ router.delete('/email/:name', async (req,res) => {
   })
 });
 
+//Deleting hobby from the Hobbies table
 router.delete('/hobby/:activity', async (req,res) => {
   var hobby = req.params.activity;
   var response = await sql.deleteHobby(hobby)

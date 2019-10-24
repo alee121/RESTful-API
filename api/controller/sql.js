@@ -17,6 +17,7 @@ const con = mysql.createConnection({
   multipleStatements: "true"
 });
 
+//Establishing connection with the data base
 con.connect((err) => {
   if(err)
     throw err;
@@ -24,27 +25,44 @@ con.connect((err) => {
 });
 
 function getAll(){
-
+  let sql = "SELECT ";
 }
 
 function getName(){
   let sql = "SELECT FirstName,LastName FROM Users";
   con.query(sql, (err,result,fields) => {
-    if(err) throw err;
+    if(err){
+      console.log("Error SELECTING the user's names");
+      return Promise.reject(err);
+    }
 
     console.log("Selected all users");
-    console.log(result);
   });
   return Promise.resolve('Returning all users');
 }
 
 function getHobbies(){
+  let sql = "SELECT Activities FROM Hobbies";
+  con.query(sql, (err,result,fields) => {
+    if(err){
+      console.log("Error SELECTING all hobbies"); 
+      return Promise.reject(err);
+    }
 
+    console.log("Selected all hobbies");
+  });
+  return Promise.resolve('Returning all hobbies');
 }
 
+////////////////////////////////////////////*
+*****
+	EMAIL IS UNIQUE, SO IF THE SAME USER TRIES TO INPUT TWICE, THERE WILL BE AN ERROR
+	NEED TO CHECK IF THE USER IS ALREADY IN THE DATABASE. IF SO, THEN I ONLY NEED TO UPDATE
+	THE USER TO HOBBIES TABLE
+*****
+*///////////////////////////////////////////
 function postData(body){
   const fname = body.users.fname, lname = body.users.lname, mob = body.users.mob, dob = body.users.dob, yob = body.users.yob, email = body.users.email
-  console.log(fname + lname + mob + dob + yob + email)
   let user = "INSERT INTO Users (FirstName, LastName, MOB, DOB, YOB, Email) VALUES (?,?,?,?,?,?)";
   con.query(user, [fname,lname,mob,dob,yob,email], (err,results) => {
     if(err){
@@ -62,7 +80,8 @@ function postData(body){
     }
   });
 
-  let uh = "INSERT INTO User_To_Hobby (idUsers) VALUES ((SELECT idHobbies FROM Hobbies WHERE Activity=?),(SELECT idUsers FROM Users WHERE Email=?))"; 
+  //Selecting ID's from tables User and Hobby to input into the composite entity
+  let uh = "INSERT INTO User_To_Hobby (idUsers,idHobbies) VALUES ((SELECT idUsers FROM Users WHERE Email=?),(SELECT idHobbies FROM Hobbies WHERE Activity=?))"; 
   con.query(uh, [email,act], (err,result) => {
     if(err){
       console.log("Error posting to the User to Hobby table")
@@ -73,19 +92,24 @@ function postData(body){
   return Promise.resolve("Successfully Updated a Record");
 }
 
-function deleteUser(user){
-  let sql = "DELETE FROM Users WHERE Email=" +"'"+user+"'";
-  con.query(sql, (err,result) => {
-    if(err) throw err;
+function deleteUser(name){
+  const user = name;
+  let sql = "DELETE FROM Users WHERE Email=?";
+  con.query(sql, [user], (err,result) => {
+    if(err){
+      console.log(`Error deleting '${user}'`);
+      return Promise.reject(err);
+    }
 
     console.log("Deleted User");
   });
   return Promise.resolve("Successfully Deleted User");
 }
 
-function deleteHobby(hobby){
-  let sql = "DELETE FROM Hobbies WHERE Activity=" +"'"+hobby+"'";
-  con.query(sql, (err,result) => {
+function deleteHobby(act){
+  const hobby = act;
+  let sql = "DELETE FROM Hobbies WHERE Activity=?"; 
+  con.query(sql, [hobby] (err,result) => {
     if(err) throw err;
 
     console.log("Deleted Activity");
