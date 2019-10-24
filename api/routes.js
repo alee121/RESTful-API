@@ -5,7 +5,7 @@ const router = express.Router();
 
 //Get all users and the hobbies they are interested in
 router.get('/info', async (req,res) => {
-   var response = await sql.getAllTest()
+  var response = await sql.getAll()
   .then((response) => {
     res.status(200).json({
       message: response
@@ -16,7 +16,7 @@ router.get('/info', async (req,res) => {
       error: err
     })
   })
-});
+})
 
 //Get all the users names from the database
 router.get('/users', async (req,res) => {
@@ -65,9 +65,9 @@ router.post('/populate', async (req,res) => {
 });
 
 //delete user from the Users table
-router.delete('/user/:name', async (req,res) => {
-  var name = req.params.name;
-  var response = await sql.deleteUser(name)
+router.delete('/user/:email', async (req,res) => {
+  var email = req.params.email;
+  var response = await sql.deleteUser(email)
   .then((response) => {
     res.status(200).json({
       message: response

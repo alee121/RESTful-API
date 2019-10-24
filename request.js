@@ -13,7 +13,7 @@ let requestBod = {
     "email" : "mynameisadrianlee315@gmail.com"
   },
   "hobbies": {
-    "act" : "Tennis",
+    "act" : "Soccer",
     "cat" : "Sport"
   }
 };

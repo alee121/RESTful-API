@@ -22,48 +22,70 @@ con.connect((err) => {
   if(err)
     throw err;
   console.log("Connected to database");
-});
+})
 
 
-function getAllTest(){
-  let sql = "SELECT Users.FirstName, Users.LastName, Hobbies.Activity FROM Users JOIN User_to_Hobby ON Users.idUsers = User_to_Hobby.idUsers JOIN Hobbies ON Hobbies.idHobbies = User_to_Hobby.idHobbies";
-  console.log('made it a little inside')
-  con.query(sql, (err,result,fields) => {
-    if(err){
-      console.log("Error selecting the users and their hobbies")
-      return Promise.reject(err);
-    }
-    
-    console.log(result)
-    console.log("Selected Users and their Hobbies");
+function getAll(){
+  return new Promise((resolve,reject) => {
+    let sql = "SELECT Users.FirstName, Users.LastName, Hobbies.Activity FROM Users JOIN User_to_Hobby ON Users.idUsers = User_to_Hobby.idUsers JOIN Hobbies ON Hobbies.idHobbies = User_to_Hobby.idHobbies";
+    con.query(sql, (err,result,fields) => {
+      if(err){
+        console.log("Error selecting the users and their hobbies")
+        reject({
+	  message: 'Error Selecting the users and their hobbies',
+	  body: err
+	});
+      }
+
+      console.log("Selected Users and their Hobbies");
+      resolve({
+	message: 'Selected Users and their Hobbies',
+        body: result
+      })
+    });
   });
-  return Promise.resolve('Returned users and their hobbies');
 }
 
 function getName(){
-  let sql = "SELECT FirstName,LastName FROM Users";
-  con.query(sql, (err,result,fields) => {
-    if(err){
-      console.log("Error SELECTING the user's names");
-      return Promise.reject(err);
-    }
+  return new Promise((resolve,reject) => {
+    let sql = "SELECT FirstName,LastName FROM Users";
+    con.query(sql, (err,result,fields) => {
+      if(err){
+        console.log("Error Selecting all users");
+        return reject({
+	  message: 'Error Selecting all Users',
+	  body: err
+	});
+      }
 
-    console.log("Selected all users");
+      console.log("Selected all users");
+      resolve({
+	message: 'Selected all users',
+	body: result
+      });
+    });
   });
-  return Promise.resolve('Returning all users');
 }
 
 function getHobbies(){
-  let sql = "SELECT Activities FROM Hobbies";
-  con.query(sql, (err,result,fields) => {
-    if(err){
-      console.log("Error SELECTING all hobbies"); 
-      return Promise.reject(err);
-    }
+  return new Promise((resolve,reject) => {
+    let sql = "SELECT Activities FROM Hobbies";
+    con.query(sql, (err,result,fields) => {
+      if(err){
+        console.log("Error SELECTING all hobbies"); 
+        reject({
+	  message: 'Error Selecting all hobbies',
+	  body: err
+	});
+      } 
 
-    console.log("Selected all hobbies");
+      console.log("Selected all hobbies");
+      resolve({
+	message: 'Selected all hobbies',
+	body: result
+      });
+    });
   });
-  return Promise.resolve('Returning all hobbies');
 }
 
 ////////////////////////////////////////////
@@ -104,6 +126,11 @@ function postData(body){
   return Promise.resolve("Successfully Updated a Record");
 }
 
+//////////////////////////////////////
+/*
+What if you input the wrong email? Notify the user that an incorrect email was input
+*/
+//////////////////////////////////////
 function deleteUser(name){
   const user = name;
   let sql = "DELETE FROM Users WHERE Email=?";
@@ -159,6 +186,8 @@ module.exports = {
   getName,
   deleteUser,
   deleteHobby,
-  deleteAll
+  deleteAll,
+  getAll,
+  getHobbies
 };
 
