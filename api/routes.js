@@ -4,8 +4,8 @@ let sql     = require('./controller/sql.js');
 const router = express.Router();
 
 //Get all users and the hobbies they are interested in
-router.get('/info', (req,res) => {
-   var response = await sql.getAll()
+router.get('/info', async (req,res) => {
+   var response = await sql.getAllTest()
   .then((response) => {
     res.status(200).json({
       message: response
@@ -34,8 +34,8 @@ router.get('/users', async (req,res) => {
 });
 
 //Get the hobbies of user
-router.get('/hobbies', (req,res) => {
-  var response = await sql.getHobbies
+router.get('/hobbies', async (req,res) => {
+  var response = await sql.getHobbies()
   .then((response) => {
     res.status(200).json({
       message: response

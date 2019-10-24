@@ -24,8 +24,20 @@ con.connect((err) => {
   console.log("Connected to database");
 });
 
-function getAll(){
-  let sql = "SELECT ";
+
+function getAllTest(){
+  let sql = "SELECT Users.FirstName, Users.LastName, Hobbies.Activity FROM Users JOIN User_to_Hobby ON Users.idUsers = User_to_Hobby.idUsers JOIN Hobbies ON Hobbies.idHobbies = User_to_Hobby.idHobbies";
+  console.log('made it a little inside')
+  con.query(sql, (err,result,fields) => {
+    if(err){
+      console.log("Error selecting the users and their hobbies")
+      return Promise.reject(err);
+    }
+    
+    console.log(result)
+    console.log("Selected Users and their Hobbies");
+  });
+  return Promise.resolve('Returned users and their hobbies');
 }
 
 function getName(){
@@ -54,13 +66,13 @@ function getHobbies(){
   return Promise.resolve('Returning all hobbies');
 }
 
-////////////////////////////////////////////*
-*****
+////////////////////////////////////////////
+/*****
 	EMAIL IS UNIQUE, SO IF THE SAME USER TRIES TO INPUT TWICE, THERE WILL BE AN ERROR
 	NEED TO CHECK IF THE USER IS ALREADY IN THE DATABASE. IF SO, THEN I ONLY NEED TO UPDATE
 	THE USER TO HOBBIES TABLE
-*****
-*///////////////////////////////////////////
+*****/
+///////////////////////////////////////////
 function postData(body){
   const fname = body.users.fname, lname = body.users.lname, mob = body.users.mob, dob = body.users.dob, yob = body.users.yob, email = body.users.email
   let user = "INSERT INTO Users (FirstName, LastName, MOB, DOB, YOB, Email) VALUES (?,?,?,?,?,?)";
@@ -109,8 +121,11 @@ function deleteUser(name){
 function deleteHobby(act){
   const hobby = act;
   let sql = "DELETE FROM Hobbies WHERE Activity=?"; 
-  con.query(sql, [hobby] (err,result) => {
-    if(err) throw err;
+  con.query(sql, [hobby], (err,result) => {
+    if(err){
+      console.log(`Failed to delete hobby '${hobby}'`);
+      return Promise.reject(err);
+    }
 
     console.log("Deleted Activity");
   });
