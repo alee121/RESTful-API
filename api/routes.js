@@ -59,6 +59,7 @@ router.post('/populate', async (req,res) => {
   })
   .catch(err => {
     res.status(401).json({
+      message: "Error populating the data",
       error: err
     })
   })
