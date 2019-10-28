@@ -1,3 +1,3 @@
 # RESTful-API
 
-In the process of creating a RESTful API using node.js for communications with a MySQL database. The middleware will connect to MySQL Workbench populating simple tables inside my database.
+Created an Express based RESTful API that accepts HTTP requests and translate them into SQL requests. MySQL Workbench 8.0 was used to connect with the current server. 
