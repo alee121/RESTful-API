@@ -1,19 +1,20 @@
 ///////////////////
 /*
 CRITICALLY IMPORTANT
-THIS IS BECAUSE WE ARE USING VIRTUALBOX
 TO CONNECT TO MYSQL WORKBENCH, NEED TO PUT IN ROUTER GATEWAY
+FOR VIRTUAL BOX COMPATIBILITY
 router gateway = 10.0.2.2
 */
 //////////////////
 
 let mysql = require('mysql');
+require('dotenv').config();
 
 const con = mysql.createConnection({
-  host: "10.0.2.2",
-  user: "root",
-  password: "secret123",
-  database: "mydb",
+  host: process.env.SQLHOST,
+  user: process.env.USER,
+  password: process.env.PASS,
+  database: process.env.DB,
   multipleStatements: "true"
 });
 
